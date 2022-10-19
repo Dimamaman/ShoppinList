@@ -30,6 +30,7 @@
             android:text="Apple Watch"
             />
         <TextView
+            android:id="@+id/tv_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
