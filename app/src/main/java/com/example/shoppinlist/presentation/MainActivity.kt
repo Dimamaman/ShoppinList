@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinlist.R
 import com.example.shoppinlist.domain.ShopItem
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel
@@ -22,6 +23,12 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
+        }
+
+        val addButton: FloatingActionButton = findViewById(R.id.button_add_shop_item)
+        addButton.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
         }
     }
 
@@ -71,6 +78,8 @@ class MainActivity : AppCompatActivity() {
     private fun setUpClickListener() {
         shopListAdapter.onShopItemClickListener = {
             Log.d("Clicked", it.name)
+            val intent = ShopItemActivity.newItentEditItem(this,it.id)
+            startActivity(intent)
         }
     }
 

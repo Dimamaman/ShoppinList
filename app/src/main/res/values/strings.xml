@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Shoppin List</string>
     <string name="add_a_new_shop_item">Add a new shop item</string>
+    <string name="name">Name</string>
+    <string name="cont">Count</string>
+    <string name="save">Save</string>
+    <string name="error_input_count">Error Count</string>
+    <string name="error_input_name">Error Name</string>
 </resources>
