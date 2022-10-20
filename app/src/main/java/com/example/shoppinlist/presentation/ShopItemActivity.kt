@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
@@ -34,35 +35,31 @@ class ShopItemActivity : AppCompatActivity() {
         observeViewModel()
     }
 
-    private fun observeViewModel() {
-        viewmodel.errorInputCount.observe(this) {
-            val message = if (it) {
-                getString(R.string.error_input_count)
-            } else {
-                null
-            }
-            tilCount.error = message
+    private fun parseIntent() {
+        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
+            throw RuntimeException("Param screen mode is absent")
         }
-
-        viewmodel.errorInputName.observe(this) {
-            val message = if (it) {
-                getString(R.string.error_input_name)
-            } else {
-                null
-            }
-            tilName.error = message
+        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
+        if (mode != MODE_ADD && mode != MODE_EDIT) {
+            throw RuntimeException("Param screen mode is absent")
         }
-
-        viewmodel.shouldClosedScreen.observe(this) {
-            finish()
+        screenMode = mode
+        Log.d("MMM","----> $screenMode")
+        if (screenMode == MODE_EDIT) {
+            if (!intent.hasExtra(EXTRA_SHOP_ITEM_ID)) {
+                throw RuntimeException("Unknown screen mode $mode")
+            }
+            shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID,ShopItem.UNDEFINED_ID)
+            Log.d("TTT","$screenMode ----> $shopItemId")
         }
     }
 
-    private fun launchRightMode() {
-        when (screenMode) {
-            MODE_EDIT -> launchEditMode()
-            MODE_ADD -> launchAddMode()
-        }
+    private fun initViews() {
+        tilName = findViewById(R.id.til_name)
+        tilCount = findViewById(R.id.til_count)
+        etName = findViewById(R.id.et_name)
+        etCount = findViewById(R.id.et_count)
+        buttonSave = findViewById(R.id.save_button)
     }
 
     private fun addTextChangeListener() {
@@ -87,6 +84,37 @@ class ShopItemActivity : AppCompatActivity() {
         })
     }
 
+    private fun launchRightMode() {
+        when (screenMode) {
+            MODE_EDIT -> launchEditMode()
+            MODE_ADD -> launchAddMode()
+        }
+    }
+
+    private fun observeViewModel() {
+        viewmodel.errorInputCount.observe(this) {
+            val message = if (it) {
+                getString(R.string.error_input_count)
+            } else {
+                null
+            }
+            tilCount.error = message
+        }
+
+        viewmodel.errorInputName.observe(this) {
+            val message = if (it) {
+                getString(R.string.error_input_name)
+            } else {
+                null
+            }
+            tilName.error = message
+        }
+
+        viewmodel.shouldClosedScreen.observe(this) {
+            finish()
+        }
+    }
+
     private fun launchEditMode() {
         viewmodel.getShopItem(shopItemId)
         viewmodel.shopItem.observe(this) {
@@ -104,31 +132,6 @@ class ShopItemActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
-        tilName = findViewById(R.id.til_name)
-        tilCount = findViewById(R.id.til_count)
-        etName = findViewById(R.id.et_name)
-        etCount = findViewById(R.id.et_count)
-        buttonSave = findViewById(R.id.save_button)
-    }
-
-    private fun parseIntent() {
-        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
-            throw RuntimeException("Param screen mode is absent")
-        }
-        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
-        if (mode != MODE_ADD && mode != MODE_EDIT) {
-            throw RuntimeException("Param screen mode is absent")
-        }
-        screenMode = mode
-        if (screenMode == MODE_EDIT) {
-            if (!intent.hasExtra(EXTRA_SHOP_ITEM_ID)) {
-                throw RuntimeException("Unknown screen mode $mode")
-            }
-            shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID,ShopItem.UNDEFINED_ID)
-        }
-    }
-
     companion object {
         private const val EXTRA_SCREEN_MODE = "extra_mode"
         private const val EXTRA_SHOP_ITEM_ID = "extra_shop_item_id"
@@ -141,7 +144,7 @@ class ShopItemActivity : AppCompatActivity() {
             return intent
         }
 
-        fun newItentEditItem(context: Context,shopItemId: Int): Intent {
+        fun newIntentEditItem(context: Context, shopItemId: Int): Intent {
             val intent = Intent(context,ShopItemActivity::class.java)
             intent.putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
             intent.putExtra(EXTRA_SHOP_ITEM_ID,shopItemId)
