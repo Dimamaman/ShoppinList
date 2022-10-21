@@ -165,7 +165,7 @@ class ShopItemFragment() : Fragment() {
         const val MODE_UNKNOWN = ""
     }
 
-    fun newInstanceNewItem(): ShopItemFragment {
+    fun newInstanceAddItem(): ShopItemFragment {
 //        val args = Bundle()
 //        args.putString(SCREEN_MODE, MODE_ADD)
 //        val fragment = ShopItemFragment()

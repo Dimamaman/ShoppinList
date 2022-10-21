@@ -4,12 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import androidx.lifecycle.ViewModelProvider
 import com.example.shoppinlist.R
 import com.example.shoppinlist.domain.ShopItem
 import com.example.shoppinlist.presentation.ShopItemFragment.Companion.MODE_UNKNOWN
@@ -22,7 +17,9 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent()
-        launchRightMode()
+        if (savedInstanceState == null){
+            launchRightMode()
+        }
     }
 
     //
@@ -48,10 +45,10 @@ class ShopItemActivity : AppCompatActivity() {
     private fun launchRightMode() {
         val fragment = when (screenMode) {
             MODE_EDIT -> ShopItemFragment().newInstanceEditItem(shopItemId)
-            MODE_ADD -> ShopItemFragment().newInstanceNewItem()
+            MODE_ADD -> ShopItemFragment().newInstanceAddItem()
             else -> throw RuntimeException("Param screen mode is absent")
         }
-        supportFragmentManager.beginTransaction().add(R.id.shop_item_container,fragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.shop_item_container,fragment).commit()
 
     }
 
