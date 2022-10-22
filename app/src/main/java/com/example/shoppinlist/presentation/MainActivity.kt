@@ -3,6 +3,7 @@ package com.example.shoppinlist.presentation
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -12,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinlist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private var shopItemContainer: FragmentContainerView? = null
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
-            }else {
+            } else {
                 launchFragment(ShopItemFragment().newInstanceAddItem())
             }
         }
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     private fun launchFragment(fragment: Fragment) {
         supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
-            .replace(R.id.shop_item_container,fragment)
+            .replace(R.id.shop_item_container, fragment)
             .addToBackStack(null)
             .commit()
     }
@@ -100,12 +101,17 @@ class MainActivity : AppCompatActivity() {
     private fun setUpClickListener() {
         shopListAdapter.onShopItemClickListener = {
             if (isOnePaneMode()) {
-                val intent = ShopItemActivity.newIntentEditItem(this,it.id)
+                val intent = ShopItemActivity.newIntentEditItem(this, it.id)
                 startActivity(intent)
-            }else {
+            } else {
                 launchFragment(ShopItemFragment().newInstanceEditItem(it.id))
             }
         }
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
     }
 
     private fun setUpLongClickListener() {
